@@ -14,6 +14,7 @@ import com.cloudfoundryfordevelopers.ServiceBroker.Models.Provisioning.*;
 import com.cloudfoundryfordevelopers.ServiceBroker.Models.Update.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 @RestController
 public class ServiceBrokerController {
@@ -30,17 +31,37 @@ public class ServiceBrokerController {
         log.info("OsbVersion is " + osbVersion);
 
         // Create a dummy service
-        Service[] services = new Service[]{
-                new Service("123456", "My-Service", "MyService Plan", true, 
-                            new Plan[] {
-                                    new Plan("plan1234", "servicePlan", "ServicePlan Description")
-                            }),
-                new Service("78901", "My-Service2", "MyService Plan2", true, 
-                            new Plan[] {
-                                    new Plan("plan123444", "servicePlan2", "ServicePlan DescriptionB"),
-                                    new Plan("plan123444", "servicePlan2a", "ServicePlan DescriptionBA")
-                            }),           
-        };
+        Services services = new Services(
+            new Service[]{
+                new Service(/* service id = */"acb56d7c-XXXX-XXXX-XXXX-feb140a59a66", 
+                            /* name = */"My-Service", 
+                            /* description = */"MyService Plan", 
+                            /* tags= */new String[]{"cloudfoundryfordevelopers","dummy"},
+                            /* requires = */new String[]{},
+                            /* bindable = */true, 
+                            /* metadata = */new Metadata("My-Service", "www.image.com", "some dummy service", "www.docs.com", "www.support.com"),
+                            /* plans = */new Plan[] {
+                                                        new Plan("plan1234", "servicePlan", "ServicePlan Description")
+                                                    },
+                            /* dashboard_client = */null,
+                            /* updateable = */true
+                            ),
+                new Service(/* service id = */"acb56d7c-XXXX-XXXX-XXXX-feb140a59a67", 
+                            /* name = */"My-Service2", 
+                            /* description = */"MyService2 Plan", 
+                            /* tags= */new String[]{"cloudfoundryfordevelopers","dummy"},
+                            /* requires = */new String[]{},
+                            /* bindable = */true, 
+                            /* metadata = */new Metadata("My-Service2", "www.image.com", "some dummy service", "www.docs.com", "www.support.com"),
+                            /* plans = */new Plan[] {
+                                                        new Plan("plan5678", "servicePlanA", "ServicePlan Description"),
+                                                        new Plan("plan1012", "servicePlanB", "ServicePlan Description")
+                                                    },
+                            /* dashboard_client = */null,
+                            /* updateable = */true
+                            ),           
+            }
+            );
 
         return new ResponseEntity<String>(gson.toJson(services), HttpStatus.OK);
     }   
@@ -136,7 +157,13 @@ public class ServiceBrokerController {
 
         log.info(bindingRequestBody);
 
-        Binding binding = new Binding("{\"username\": blah","", "");
+        // Let's assume we're binding only with credentials
+        JsonObject credentialsTest = new JsonObject();
+        credentialsTest.addProperty("UserName", "abcd1234567899");
+        credentialsTest.addProperty("Password", "oerh.oiwGH3pibhVF");
+        credentialsTest.addProperty("Host", "http://my.own.resource");
+
+        Binding binding = new Binding(credentialsTest, null, null, null);
         return new ResponseEntity<>(gson.toJson(binding), HttpStatus.OK);
     }
 
@@ -175,7 +202,7 @@ public class ServiceBrokerController {
                 @RequestBody(required=false)         String requestBody
             ) 
     {
-        log.info("Performing Provisioning:");
+        log.info("Performing Deprovisioning:");
         log.info("OsbVersion is " + osbVersion);
         log.info("OriginatingIdentity is " + originatingIdentity);
         log.info("Instance id is " + instanceId);
