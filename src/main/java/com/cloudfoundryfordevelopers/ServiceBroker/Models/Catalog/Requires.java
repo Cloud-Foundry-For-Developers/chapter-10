@@ -1,6 +1,6 @@
 package com.cloudfoundryfordevelopers.ServiceBroker.Models.Catalog;
 
-// Service requires enum
+// Service Requires enum
 public enum Requires
 {
     syslog_drain("syslog_drain"),

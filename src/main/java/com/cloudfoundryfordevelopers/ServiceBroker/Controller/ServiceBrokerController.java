@@ -29,7 +29,7 @@ public class ServiceBrokerController {
         log.info("Performing Catalog:");
         log.info("OsbVersion is " + osbVersion);
 
-        // Create a Test servie
+        // Create a dummy service
         Service[] services = new Service[]{
                 new Service("123456", "My-Service", "MyService Plan", true, 
                             new Plan[] {
